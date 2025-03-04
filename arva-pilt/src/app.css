@@ -1,1 +1,7 @@
-@import 'tailwindcss'
+@import 'tailwindcss';
+
+body {
+    font-family: 'Rowdies';
+    background-color: #1e272e;
+    color: white;
+}

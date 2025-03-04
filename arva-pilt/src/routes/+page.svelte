@@ -20,8 +20,6 @@
 
 <style>
     .container {
-        font-family: 'Rowdies';
-        background-color: #1e272e;
         width: 100vw;
         height: 100vh;
         max-width: 1920px;
