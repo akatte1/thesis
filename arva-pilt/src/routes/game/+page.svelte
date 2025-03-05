@@ -2,6 +2,7 @@
     import { getAllImages } from "$lib/supabase";
     import L from "leaflet";
     import { onMount } from "svelte";
+    import Header from "$lib/Header.svelte";
 
     // Andmete laadimine
     let images = []
@@ -141,6 +142,29 @@ button {
     width: 300px;
     height: 40px;
 }
+
+#year-select {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+#year-select::-webkit-slider-runnable-track {
+  background: white;
+  height: 0.1rem;
+}
+
+#year-select::-webkit-slider-thumb {
+   -webkit-appearance: none;
+   appearance: none;
+   margin-top: -1rem;
+   height: 2rem;
+   width: 2rem;
+   border-radius: 1rem;
+   border-color: white;
+   border: solid;    
+}
 </style>
 
 <svelte:head>
@@ -149,29 +173,35 @@ button {
    crossorigin=""/>
 </svelte:head>
 
+<Header points={totalPoints} counter={counter} />
+
 {#if isLoading}
 Loading...
 {:else}
 
-<div class="flex">
-    <div class="w-1/2">
+<div class="flex w-full h-full">
+    <div class="w-1/2 p-2">
         {#key counter}
-        <img src={images[counter-1]["image_path"]} alt="pilt" class="image"/>
+        <div class="w-full h-96 flex items-center justify-center">
+            <img src={images[counter-1]["image_path"]} alt="pilt" class="rounded-lg w-auto h-auto max-w-full max-h-full object-contain"/>
+        </div>
         {/key}
 
         {#if guessed}
-        <div class="w-full">
+        <div class="w-full h-1/4">
             <p>{images[counter-1]["description"]}</p>
         </div>
         {/if}
     </div>
-    <div class="w-1/2">
-        <div id="map" use:mapAction></div>
+    <div class="w-1/2 p-2">
+        <div id="map" use:mapAction class="rounded-md"></div>
 
         {#if !guessed}
-        <div class="flex">
-            <h2 class="border p-xs">{year}</h2>
-            <input bind:value={year} type="range" min=1890 max=2025 class="w-full">
+        <div class="flex gap-4">
+            <div class="w-24 h-fit">
+                <h1 class="text-3xl">{year}</h1>
+            </div> 
+            <input bind:value={year} type="range" min=1890 max=2025 class="w-full" id="year-select">
         </div>
         {:else}
         <div>
