@@ -3,6 +3,7 @@
     import L from "leaflet";
     import { onMount } from "svelte";
     import Header from "$lib/Header.svelte";
+    import Image from "$lib/Image.svelte";
 
     // Andmete laadimine
     let images = []
@@ -32,16 +33,17 @@
     let counter = 1
 
     // Kaardi initsialiseerimine
-    const initialView = [58.692947, 25.825512]
+    const initialView = [58.692947, 24.798119]
     function createMap(container) {
-        let m = L.map(container, {preferCanvas: true }).setView(initialView, 6);
+        let m = L.map(container, {preferCanvas: true }).setView(initialView, 7);
         L.tileLayer(
             'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
             {
             attribution: `&copy;<a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>,
                 &copy;<a href="https://carto.com/attributions" target="_blank">CARTO</a>`,
             subdomains: 'abcd',
-            maxZoom: 14,
+            maxZoom: 16,
+            minZoom: 5
             }
         ).addTo(m)
 
@@ -60,7 +62,7 @@
     }
 
     function onMapClick(e) {
-        if (inBounds(e.latlng["lat"], e.latlng["lng"])) {
+        if (inBounds(e.latlng["lat"], e.latlng["lng"]) && !guessed) {
             if (marker) {
                 
                 marker.setLatLng(e.latlng)
@@ -139,8 +141,10 @@
 #map { height: 300px; width: 100%;}
 
 button {
-    width: 300px;
-    height: 40px;
+    width: 12rem;
+    height: fit-content;
+    padding-block: .5rem;
+    border-radius: var(--radius-md);
 }
 
 #year-select {
@@ -180,10 +184,10 @@ Loading...
 {:else}
 
 <div class="flex w-full h-full">
-    <div class="w-1/2 p-2">
+    <div class="w-1/2 px-6 py-2">
         {#key counter}
         <div class="w-full h-96 flex items-center justify-center">
-            <img src={images[counter-1]["image_path"]} alt="pilt" class="rounded-lg w-auto h-auto max-w-full max-h-full object-contain"/>
+            <Image source={images[counter-1]["image_path"]} />
         </div>
         {/key}
 
@@ -193,38 +197,53 @@ Loading...
         </div>
         {/if}
     </div>
-    <div class="w-1/2 p-2">
-        <div id="map" use:mapAction class="rounded-md"></div>
+    <div class="w-1/2 px-6 py-2">
+        <div id="map" use:mapAction class="rounded-md mb-4 cursor-crosshair!"></div>
 
         {#if !guessed}
-        <div class="flex gap-4">
+        <div class="flex gap-4 mb-4">
             <div class="w-24 h-fit">
                 <h1 class="text-3xl">{year}</h1>
             </div> 
             <input bind:value={year} type="range" min=1890 max=2025 class="w-full" id="year-select">
         </div>
         {:else}
-        <div>
+        <div class="mb-4">
             <h3>Kaugus õigest asukohast: {distance} km</h3>
-            <h3>Pakutud aasta: {year} Õige aasta: {images[counter-1]["year"]}</h3>
-            <h3>Punktid</h3>
-            <div class="flex">
-                <h3>Kaugus: {distancePoints}</h3>
-                <h3>Aastaarv: {timePoints}</h3>
-                <h3>Kokku: {distancePoints + timePoints}</h3>
+            <div class="flex gap-4 mb-4">
+                <h3>Pakutud aasta: {year}</h3>
+                <h3>Õige aasta: {images[counter-1]["year"]}</h3>
+            </div>
+            <div class="flex justify-between">
+                <div class="flex gap-2">
+                    <h3>Kaugus: </h3>
+                    <div class="h-fit w-12 p-.5 bg-white text-[#1e272e] flex justify-center rounded-md">{distancePoints}</div>
+                </div>
+                <div class="flex gap-2">
+                    <h3>Aastaarv: </h3>
+                    <div class="h-fit w-12 p-.5 bg-white text-[#1e272e] flex justify-center rounded-md">{timePoints}</div>
+                </div>
+                <div class="flex gap-2">
+                    <h3>Kokku: </h3>
+                    <div class="h-fit w-12 p-.5 bg-white text-[#1e272e] flex justify-center rounded-md">{distancePoints + timePoints}</div>
+                </div>
             </div>
         </div>
         {/if}
 
-        {#if !selected}
-            <button class="disabled">Vali asukoht</button>
-        {:else}
-            {#if !guessed}
-            <button on:click={makeGuess}>Arva</button>
+        <div class="w-full h-fit flex justify-end">
+            {#if !selected}
+            <button class="cursor-not-allowed bg-gray-700">Vali asukoht</button>
             {:else}
-            <button on:click={advanceImage}>Edasi</button>
+                {#if !guessed}
+                <button on:click={makeGuess} class="border border-2 hover:bg-white hover:text-[#1e272e] cursor-pointer">Arva</button>
+                {:else}
+                <button on:click={advanceImage} class="border border-2 hover:bg-white hover:text-[#1e272e] cursor-pointer">Edasi</button>
+                {/if}
             {/if}
-        {/if}
+
+        </div>
+        
     </div>
 </div>
 

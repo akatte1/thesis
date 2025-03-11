@@ -31,6 +31,9 @@
 	},
 	"dependencies": {
 		"@supabase/supabase-js": "^2.49.1",
-		"leaflet": "^1.9.4"
+		"leaflet": "^1.9.4",
+		"svelte-pan-zoom": "^0.0.13",
+		"svelte-zoom": "^1.0.16",
+		"svelte-zoomable": "^0.0.5"
 	}
 }

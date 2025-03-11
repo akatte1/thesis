@@ -1,68 +1,74 @@
 <script>
-    export let imageSrc = null;
+    export let source 
 
-    let scale = 1;
-    let translateX = 0;
-    let translateY = 0;
-    let isDragging = false;
-    let startX, startY;
-    
-    const imageRef = (node) => {
-        const onWheel = (e) => {
-        e.preventDefault();
-        const zoomIntensity = 0.1;
-        scale += e.deltaY < 0 ? zoomIntensity : -zoomIntensity;
-        scale = Math.max(1, Math.min(scale, 3));  // Limit the zoom level between 1x and 3x
-        updateTransform();
-        };
-        
-        const onMouseDown = (e) => {
-        isDragging = true;
-        startX = e.clientX - translateX;
-        startY = e.clientY - translateY;
-        document.body.style.cursor = 'grabbing';
-        };
-        
-        const onMouseMove = (e) => {
-        if (isDragging) {
-            translateX = e.clientX - startX;
-            translateY = e.clientY - startY;
-            updateTransform();
+    let scale = 1
+    let startX = 0, startY = 0, lastX = 0, lastY = 0;
+    let translateX = 0, translateY = 0
+    let isPanning = false
+
+    function onWheel(event) {
+        event.preventDefault();
+        const zoomIntensity = 0.005;
+        scale += event.deltaY * -zoomIntensity;
+        scale = Math.min(Math.max(1, scale), 3); // Restrict zoom levels
+    }
+
+    function onMouseDown(event) {
+        event.preventDefault()
+        isPanning = true
+        startX = event.clientX  
+        startY = event.clientY
+        lastX = translateX;
+        lastY = translateY;
+    }
+
+    function onMouseMove(event) {
+        if (isPanning) {
+            const deltaX = event.clientX - startX;
+            const deltaY = event.clientY - startY;
+
+            translateX = lastX + deltaX;
+            translateY = lastY + deltaY;
         }
-        };
-        
-        const onMouseUp = () => {
-        isDragging = false;
-        document.body.style.cursor = 'grab';
-        };
-        
-        const onMouseLeave = () => {
-        isDragging = false;
-        document.body.style.cursor = 'grab';
-        };
+    }
 
-        node.addEventListener('wheel', onWheel);
-        node.addEventListener('mousedown', onMouseDown);
-        node.addEventListener('mousemove', onMouseMove);
-        node.addEventListener('mouseup', onMouseUp);
-        node.addEventListener('mouseleave', onMouseLeave);
-        
-        return {
-        destroy() {
-            node.removeEventListener('wheel', onWheel);
-            node.removeEventListener('mousedown', onMouseDown);
-            node.removeEventListener('mousemove', onMouseMove);
-            node.removeEventListener('mouseup', onMouseUp);
-            node.removeEventListener('mouseleave', onMouseLeave);
-        }
-        };
-    };
+    function onMouseUp(event) {
+        isPanning = false
+    }
 
-    const updateTransform = () => {
-        imageRef.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
-    };
+
 </script>
 
-<div class="w-full h-96 flex items-center justify-center relative">
-    <img bind:this={imageRef}  src={imageSrc} alt="pilt" class="rounded-lg w-auto h-auto max-w-full max-h-full object-contain">
+<div 
+    class="zoom-container"
+    on:wheel={onWheel}
+    on:mousedown={onMouseDown}
+    on:mousemove={onMouseMove}
+    on:mouseup={onMouseUp}
+    role="group"
+>
+    <img 
+        src={source}
+        alt="Zoomable Image"
+        class="rounded-lg w-auto h-auto max-w-full max-h-full object-contain "
+        style="transform: scale({scale}) translate({translateX}px, {translateY}px);"
+    />
 </div>
+
+<style>
+    .zoom-container {
+        width: 800px;
+        height: 600px;
+        overflow: hidden;
+        border: 1px solid #ddd;
+        cursor: grab;
+        position: relative;
+    }
+
+    .zoomable-image {
+        width: 100%;
+        height: auto;
+        transform-origin: center;
+        transition: transform 0.1s ease-out;
+    }
+</style>
