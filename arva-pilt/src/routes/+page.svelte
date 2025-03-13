@@ -29,17 +29,6 @@
         padding: 6rem;
     }
 
-    .logo-container {
-        height: 100%;
-        width: 50%;
-    }
-
-    .menu-container {
-        height: 100%;
-        width: 50%;
-        font-size: x-large;
-        color: white;
-    }
 
     li {
         margin: 1rem;
@@ -49,18 +38,13 @@
     li:hover {
         text-decoration: underline;
     }
-
-    #logo {
-        width: 18rem;
-        height: 18rem;
-    }
 </style>
 
-<div class="container flex">
-    <div class="logo-container flex items-center justify-center">
-        <img id="logo" src="./logo.png" alt="LOGO" class="animate-[spin_25s_linear_infinite]">
+<div class="container flex flex-col md:flex-row">
+    <div class="w-full md:w-1/2 flex items-center justify-center">
+        <img class="md:w-64 md:h-64 w-48 h-48 animate-[spin_25s_linear_infinite]" src="./logo.png" alt="LOGO">
     </div>
-    <div class="menu-container flex items-center justify-center text-center">
+    <div class="w-full md:w-1/2 text-xl text-white flex items-center justify-center text-center">
         <ul>
             <li on:click={goToGame}><h1>Mängi</h1></li>
             <li on:click={goToCreateGame}><h1>Loo mäng</h1></li>

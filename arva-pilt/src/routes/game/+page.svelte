@@ -1,5 +1,7 @@
 <script>
     import { getAllImages } from "$lib/supabase";
+    import { scoreStore } from '$lib/stores/score';
+    import { goto } from '$app/navigation';
     import L from "leaflet";
     import { onMount } from "svelte";
     import Header from "$lib/Header.svelte";
@@ -68,7 +70,6 @@
                 marker.setLatLng(e.latlng)
             } else {
                 marker = L.marker(e.latlng).addTo(map)
-                selected = true
             }
         }       
     }
@@ -111,16 +112,27 @@
     // Converts numeric degrees to radians
     function toRad(Value) { return Value * Math.PI / 180; }
 
+    // Edasi liikumine
+
     // Uus pilt
     function advanceImage() {
         guessed = false
-        selected = false
         map.removeLayer(marker)
         map.removeLayer(correctMarker)
         correctMarker = null
         marker = null
         distance = null
         counter++
+    }
+
+    // Lõpp
+    function advance() {
+        if (counter == 5) {
+            scoreStore.set(totalPoints)
+            goto("/leaderboard")
+        } else {
+            advanceImage()
+        }
     }
 
     // Kauguse punktid
@@ -183,8 +195,8 @@ button {
 Loading...
 {:else}
 
-<div class="flex w-full h-full">
-    <div class="w-1/2 px-6 py-2">
+<div class="flex md:flex-row flex-col w-full h-full">
+    <div class="w-full md:w-1/2 px-6 py-2">
         {#key counter}
         <div class="w-full h-96 flex items-center justify-center">
             <Image source={images[counter-1]["image_path"]} />
@@ -197,7 +209,7 @@ Loading...
         </div>
         {/if}
     </div>
-    <div class="w-1/2 px-6 py-2">
+    <div class="w-full md:w-1/2 px-6 py-2">
         <div id="map" use:mapAction class="rounded-md mb-4 cursor-crosshair!"></div>
 
         {#if !guessed}
@@ -210,11 +222,11 @@ Loading...
         {:else}
         <div class="mb-4">
             <h3>Kaugus õigest asukohast: {distance} km</h3>
-            <div class="flex gap-4 mb-4">
+            <div class="flex flex-col md:flex-row md:gap-4 mb-4">
                 <h3>Pakutud aasta: {year}</h3>
                 <h3>Õige aasta: {images[counter-1]["year"]}</h3>
             </div>
-            <div class="flex justify-between">
+            <div class="flex flex-col gap-4 md  :flex-row justify-between">
                 <div class="flex gap-2">
                     <h3>Kaugus: </h3>
                     <div class="h-fit w-12 p-.5 bg-white text-[#1e272e] flex justify-center rounded-md">{distancePoints}</div>
@@ -232,13 +244,13 @@ Loading...
         {/if}
 
         <div class="w-full h-fit flex justify-end">
-            {#if !selected}
+            {#if !marker}
             <button class="cursor-not-allowed bg-gray-700">Vali asukoht</button>
             {:else}
                 {#if !guessed}
                 <button on:click={makeGuess} class="border border-2 hover:bg-white hover:text-[#1e272e] cursor-pointer">Arva</button>
                 {:else}
-                <button on:click={advanceImage} class="border border-2 hover:bg-white hover:text-[#1e272e] cursor-pointer">Edasi</button>
+                <button on:click={advance} class="border border-2 hover:bg-white hover:text-[#1e272e] cursor-pointer">Edasi</button>
                 {/if}
             {/if}
 

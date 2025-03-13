@@ -15,3 +15,25 @@ export async function getAllImages(table) {
 
     return data
 }
+
+export async function getAllScores(table) {
+    const {data, error} = await supabase.from(table).select("*")
+
+    if (error) {
+        console.log("error: ", error)
+        return []
+    }
+
+    return data
+}
+
+export async function writeScore(table, data) {
+    const { error } = await supabase
+            .from(table)
+            .insert([{ name: data.name, score: data.score }]);
+
+        if (error) {
+            message = 'Failed to submit score!';
+            console.error(error);
+        }
+}
