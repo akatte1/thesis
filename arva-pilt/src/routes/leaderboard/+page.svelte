@@ -20,7 +20,7 @@
 
 <Header showData={false} />
 
-{#if !scoreSubmitted}
+{#if !scoreSubmitted && score > 0}
 <div class="flex w-full h-fit py-6 flex flex-col md:flex-row justify-center items-center gap-4">
     <input bind:value={name} type="text" class="border-2 border-white rounded-lg" placeholder="Nimi">
     <h1>Punktid: {score}</h1>

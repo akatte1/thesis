@@ -8,14 +8,20 @@
     import Image from "$lib/Image.svelte";
 
     // Andmete laadimine
-    let images = []
+    export let data;
+    let { images } = data;
 
-    let isLoading = true
+    let isLoading = false
+
+
+    /*
     onMount(async () => {
         images = await getAllImages("images")
         console.log(images)
         isLoading = false
-    })    
+    })   
+    */ 
+    
 
     // Kaart
     let ala = [[57.476035, 21.503336], [59.752687, 28.233382]]
@@ -226,7 +232,7 @@ Loading...
                 <h3>Pakutud aasta: {year}</h3>
                 <h3>Õige aasta: {images[counter-1]["year"]}</h3>
             </div>
-            <div class="flex flex-col gap-4 md  :flex-row justify-between">
+            <div class="flex flex-col gap-4 md:flex-row justify-between">
                 <div class="flex gap-2">
                     <h3>Kaugus: </h3>
                     <div class="h-fit w-12 p-.5 bg-white text-[#1e272e] flex justify-center rounded-md">{distancePoints}</div>

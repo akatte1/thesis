@@ -1,7 +1,11 @@
 <script>
     import Header from "$lib/Header.svelte";
+	import { uploadImage, writeCustomGame, writeCustomImage } from "$lib/supabase";
     import L from "leaflet";
+	import { onMount } from "svelte";
 
+    let gameId = Math.random().toString(36).substring(2, 8);
+   
     /**********/
     //  Kaart //
     /**********/ 
@@ -63,35 +67,43 @@
     let showForm = false
     let rounds = []
     let image = null
+    let image_url = null
     let location = null
     let description = null
     let attribution = null
+    let year = 1950
     let newRound = {}
+
+    let uploadingImage = false
 
     function addRound() { showForm = true } 
 
     function cancelRound() { showForm = false }
 
-    function confirmRound() {
-        console.log("tere")
-        console.log(location)
-        console.log(image)
-        if (image && location && description && attribution) {
+    async function confirmRound() {
+        if (image && location && description && attribution && year) {
+            uploadingImage = true
+            image_url = await uploadImage(image, gameId)
+
             newRound = {
                 id: rounds.length+1,
-                image: image,
+                image_url: image_url,
                 location: location,
+                year: year,
                 description: description,
                 attribution: attribution
             }
             rounds = [...rounds, newRound]
 
             image = null
+            image_url = null
             location = null
             description = null
             attribution = null
             marker = null
+            year = null
             showForm = false
+            uploadingImage = false
         } else {
             alert("Mõned väljad on täitmata!")
         }
@@ -105,6 +117,15 @@
 
     }
 
+
+    async function createGame() {
+        let dbGameId = await writeCustomGame(gameId)
+        
+        for (let i=0; i<rounds.length; i++) {
+            await writeCustomImage(rounds[i], dbGameId)
+        }
+    }
+
 </script>
 
 <svelte:head>
@@ -116,35 +137,46 @@
 <Header showData={false} />
 <h1 class="text-2xl flex justify-center">Uus mäng</h1>
 <div class="flex w-full h-fit px-[2%] mb-4 gap-4 items-center">
-    <button on:click={addRound} class="text-2xl border border-2 hover:bg-white hover:text-[#1e272e] cursor-pointer w-8 h-8 rounded-lg flex justify-center items-center">+</button>
-    <h1>Lisa voor</h1>
+    <button on:click={addRound} class="text-lg border border-2 hover:bg-white hover:text-[#1e272e] cursor-pointer w-36 h-fit rounded-lg flex justify-center items-center">Lisa voor +</button>
 </div>
 <div class="w-full h-fit">
     <ul class="flex w-full px-[2%]">
-        <li class="w-8">Nr</li>
-        <ul class="flex w-3/4 justify-between">
-            <li>Pilt</li>
-            <li>Asukoht</li>
-            <li>Kirjeldus</li>
-            <li>Viide</li>
+        <li class="w-8 h-fit py-2 flex justify-center items-center border border-1 border-white">Nr</li>
+        <ul class="flex w-full">
+            <li class="w-1/5 h-fit py-2 flex justify-center items-center border border-1 border-white">Pilt</li>
+            <li class="w-1/5 h-fit py-2 flex justify-center items-center border border-1 border-white">Asukoht</li>
+            <li class="w-1/5 h-fit py-2 flex justify-center items-center border border-1 border-white">Aasta</li>
+            <li class="w-1/5 h-fit py-2 flex justify-center items-center border border-1 border-white">Kirjeldus</li>
+            <li class="w-1/5 h-fit py-2 flex justify-center items-center border border-1 border-white">Viide</li>
         </ul>
     </ul>
     {#each rounds as round}
     <ul class="flex w-full px-[2%]">
-        <li class="w-8">{round.id}</li>
-        <ul class="flex w-3/4 justify-between">
-            <li><img src={URL.createObjectURL(round.image)} alt="pildike"></li>
-            <li>{round.location}</li>
-            <li>{round.description}</li>
-            <li>{round.attribution}</li>
+        <li class="w-8 h-18 flex justify-center items-center border border-1 border-white">{round.id}</li>
+        <ul class="flex w-full justify-between">
+            <li class="w-1/5 h-18 flex p-2 text-md flex justify-center items-center border border-1 border-white"><img src={round.image_url} alt="pildike" class="w-auto h-auto max-w-full max-h-full object-contain"></li>
+            <li class="w-1/5 h-18 flex p-2 text-md text-wrap border border-1 border-white"><p class="break-all">{round.location}</p></li>
+            <li class="w-1/5 h-18 flex p-2 text-md text-wrap border border-1 border-white">{round.year}</li>
+            <li class="w-1/5 h-18 flex p-2 text-md text-wrap border border-1 border-white">{round.description}</li>
+            <li class="w-1/5 h-18 flex p-2 text-md text-wrap border border-1 border-white">{round.attribution}</li>
         </ul>
     </ul>
     {/each}
+    {#if rounds.length > 0}
+    <button on:click={createGame} class="border border-2 hover:bg-white hover:text-[#1e272e] cursor-pointer mt-4 rounded-lg w-46">Loo mäng</button>
+    {/if}
 </div>
 
 {#if showForm}
     <div class="w-full h-full p-8 absolute top-0 left-0">
+        
+        
         <div class="w-full h-fit bg-gray-700 rounded-lg">
+            {#if uploadingImage}
+            <div class="w-full h-screen flex justify-center items-center">
+                <img src="./logo.png" alt="logo" class="animate-spin w-8 h-8">
+            </div>
+            {:else}
             <div class="w-full h-fit grid md:grid-rows-2 md:grid-cols-2 grid-rows-4 gird-cols-1">
                 <div class="w-full h-full p-6">
                     <h1 class="text-xl mb-2">Pilt</h1>
@@ -165,14 +197,45 @@
                     <h1 class="text-xl mb-2">Viide</h1>
                     <textarea bind:value={attribution} class="w-full h-28 flex justify-center items-center border border-white rounded-lg"></textarea>
                 </div>
+                <div class="w-full h-full p-6">
+                    <h1 class="text-xl mb-2">Aasta</h1>
+                    <h1 class="text-lg">{year}</h1>
+                    <input bind:value={year} type="range" min=1890 max=2025 class="w-full" id="year-select">
+                </div>
             </div>
             <div class="w-full h-fit p-6 flex gap-6 justify-end">
                 <button on:click={cancelRound} class="w-24 border border-2 border-red hover:bg-red-400 hover:text-[#1e272e] cursor-pointer rounded-lg hover:border-none">Tühista</button>
                 <button on:click={confirmRound} class="w-24 border border-2 hover:bg-white hover:text-[#1e272e] cursor-pointer rounded-lg hover:border-none">Lisa</button>
             </div>
+            {/if}
         </div>
     </div>
 {/if}
 
 
-<style></style>
+<style>
+
+#year-select {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+#year-select::-webkit-slider-runnable-track {
+  background: white;
+  height: 0.1rem;
+}
+
+#year-select::-webkit-slider-thumb {
+   -webkit-appearance: none;
+   appearance: none;
+   margin-top: -1rem;
+   height: 2rem;
+   width: 2rem;
+   border-radius: 1rem;
+   border-color: white;
+   border: solid;    
+}
+
+</style>
