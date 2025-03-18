@@ -5,7 +5,7 @@ const supabaseApiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmF
 
 export const supabase = createClient(supabaseUrl, supabaseApiKey);
 
-export async function getAllImages(table) {
+export async function getAllRows(table) {
     const {data, error} = await supabase.from(table).select("*")
 
     if (error) {
@@ -16,28 +16,10 @@ export async function getAllImages(table) {
     return data
 }
 
-export async function getCustomImages(gameId) {
-    const {data, error} = await supabase.from('custom_images').select("*").eq('game_id', gameId)
+/***************/
+// Scores       /
+/***************/
 
-    if (error) {
-        console.log("error: ", error)
-        return []
-    }
-
-    return data
-
-}
-
-export async function getAllScores(table) {
-    const {data, error} = await supabase.from(table).select("*")
-
-    if (error) {
-        console.log("error: ", error)
-        return []
-    }
-
-    return data
-}
 
 export async function writeScore(table, data) {
     const { error } = await supabase
@@ -45,10 +27,34 @@ export async function writeScore(table, data) {
             .insert([{ name: data.name, score: data.score }]);
 
         if (error) {
-            message = 'Failed to submit score!';
             console.error(error);
         }
 }
+
+export async function writeCustomScore(table, data, gameId) {
+    const { error } = await supabase
+            .from(table)
+            .insert([{ name: data.name, score: data.score, game_id: gameId }]);
+
+        if (error) {
+            console.error(error);
+        }
+}
+
+export async function getCustomScores(gameId) {
+    const {data, error} = await supabase.from('custom_scores').select("*").eq('game_id', gameId)
+
+    if (error) {
+        console.log("error: ", error)
+        return []
+    }
+
+    return data
+}
+
+/***************/
+// Images       /
+/***************/
 
 export async function uploadImage(file, gameId) {
 
@@ -71,19 +77,7 @@ export async function uploadImage(file, gameId) {
     return imageUrl
 }
 
-export async function writeCustomGame(gameId) {
-    const { data, error } = await supabase
-            .from('custom_games')
-            .insert([{ image_folder: gameId }])
-            .select("id")
 
-        if (error) {
-            message = 'Failed to create game!';
-            console.error(error);
-        }
-
-    return data[0].id 
-}
 
 export async function writeCustomImage(round, gameId) {
     const { error } = await supabase
@@ -100,6 +94,34 @@ export async function writeCustomImage(round, gameId) {
 
         if (error) {
             message = 'Failed to submit image!';
+            console.error(error);
+        }
+}
+
+export async function getCustomImages(gameId) {
+    const {data, error} = await supabase.from('custom_images').select("*").eq('game_id', gameId)
+
+    if (error) {
+        console.log("error: ", error)
+        return []
+    }
+
+    return data
+
+}
+
+/***************/
+// Custom games /
+/***************/
+
+export async function writeCustomGame(gameId) {
+    const { data, error } = await supabase
+            .from('custom_games')
+            .insert([{ nano_id: gameId }])
+            .select("id")
+
+        if (error) {
+            message = 'Failed to create game!';
             console.error(error);
         }
 }

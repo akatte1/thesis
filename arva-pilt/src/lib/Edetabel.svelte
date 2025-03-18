@@ -1,14 +1,9 @@
 <script>
     import { onMount } from "svelte";
-	import { getAllScores } from '$lib/supabase';
 
-    let isLoading = true
-    let scores = []
-    onMount(async () => {
-        scores = await getAllScores("scores")
-        console.log(images)
-        isLoading = false
-    })    
+    export let scores
+
+    let isLoading = true  
 
 </script>
 

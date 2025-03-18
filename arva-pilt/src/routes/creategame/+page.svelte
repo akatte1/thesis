@@ -1,10 +1,9 @@
 <script>
     import Header from "$lib/Header.svelte";
 	import { uploadImage, writeCustomGame, writeCustomImage } from "$lib/supabase";
+    import { nanoid } from "nanoid";
     import L from "leaflet";
 	import { onMount } from "svelte";
-
-    let gameId = Math.random().toString(36).substring(2, 8);
    
     /**********/
     //  Kaart //
@@ -64,6 +63,8 @@
     //  Vooru lisamine //
     /*******************/ 
 
+    let gameId = nanoid(8);
+
     let showForm = false
     let rounds = []
     let image = null
@@ -75,6 +76,8 @@
     let newRound = {}
 
     let uploadingImage = false
+    let creatingGame = false
+    let gameCreated = false
 
     function addRound() { showForm = true } 
 
@@ -119,11 +122,14 @@
 
 
     async function createGame() {
-        let dbGameId = await writeCustomGame(gameId)
+        creatingGame = true
+        await writeCustomGame(gameId)
         
         for (let i=0; i<rounds.length; i++) {
-            await writeCustomImage(rounds[i], dbGameId)
+            await writeCustomImage(rounds[i], gameId)
         }
+        creatingGame = false
+        gameCreated = true
     }
 
 </script>
@@ -135,6 +141,11 @@
 </svelte:head>
 
 <Header showData={false} />
+{#if creatingGame}
+<div class="w-full h-full flex justify-center items-center">
+    <img src="./logo.png" alt="logo" class="animate-spin w-8 h-8">
+</div>
+{:else if !gameCreated}
 <h1 class="text-2xl flex justify-center">Uus mäng</h1>
 <div class="flex w-full h-fit px-[2%] mb-4 gap-4 items-center">
     <button on:click={addRound} class="text-lg border border-2 hover:bg-white hover:text-[#1e272e] cursor-pointer w-36 h-fit rounded-lg flex justify-center items-center">Lisa voor +</button>
@@ -166,6 +177,11 @@
     <button on:click={createGame} class="border border-2 hover:bg-white hover:text-[#1e272e] cursor-pointer mt-4 rounded-lg w-46">Loo mäng</button>
     {/if}
 </div>
+{:else}
+<div class="w-full h-full flex justify-center items-center">
+    <h1 class="text-2xl">Mäng loodud! Kood: {gameId}</h1>
+</div>
+{/if}
 
 {#if showForm}
     <div class="w-full h-full p-8 absolute top-0 left-0">

@@ -2,7 +2,10 @@
     import { scoreStore } from '$lib/stores/score';
     import Header from '$lib/Header.svelte';
     import Edetabel from '$lib/Edetabel.svelte';
-    import { writeScore } from '$lib/supabase';
+    import { writeCustomScore, writeScore } from '$lib/supabase';
+
+    export let data;
+    let { scores, id } = data;
     
     let score = 0
     let newScore = null
@@ -11,8 +14,12 @@
     let scoreSubmitted = false
     let name = null
 
-    function submitScore() {
-        writeScore("scores", {name: name, score: score})
+    async function submitScore() {
+        if (id == 'daily') {
+            await writeScore("scores", {name: name, score: score})
+        } else {
+            await writeCustomScore("custom_scores", {name: name, score: score}, id)
+        }
         scoreSubmitted = true
         newScore = score
     }
@@ -29,5 +36,5 @@
 {/if}
 
 {#key newScore}
-<Edetabel />
+<Edetabel scores={scores} />
 {/key}

@@ -1,5 +1,5 @@
 <script>
-    import { getAllImages } from "$lib/supabase";
+    import { getAllRows } from "$lib/supabase";
     import { scoreStore } from '$lib/stores/score';
     import { goto } from '$app/navigation';
     import L from "leaflet";
@@ -9,7 +9,7 @@
 
     // Andmete laadimine
     export let data;
-    let { images } = data;
+    let { images, id } = data;
 
     let isLoading = false
 
@@ -135,7 +135,7 @@
     function advance() {
         if (counter == 5) {
             scoreStore.set(totalPoints)
-            goto("/leaderboard")
+            goto(`/leaderboard/${id}`)
         } else {
             advanceImage()
         }
