@@ -11,6 +11,8 @@ export async function load({ params }) {
     } else {
         scores = await getCustomScores(id)
     }
+
+    scores.sort((a, b) => b.score - a.score)
   
     return { scores, id };
 }

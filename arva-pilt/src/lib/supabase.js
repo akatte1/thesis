@@ -98,6 +98,24 @@ export async function writeCustomImage(round, gameId) {
         }
 }
 
+export async function writeNewImage(data) {
+    const { error } = await supabase
+    .from('new_images')
+    .insert([{ 
+        image_path: data.image_url,
+        latitude: data.location[0],
+        longitude: data.location[1],
+        description: data.description,
+        attribution: data.attribution,
+        year: data.year,
+     }]);
+
+    if (error) {
+        message = 'Failed to submit image!';
+        console.error(error);
+    }
+}
+
 export async function getCustomImages(gameId) {
     const {data, error} = await supabase.from('custom_images').select("*").eq('game_id', gameId)
 
@@ -125,3 +143,18 @@ export async function writeCustomGame(gameId) {
             console.error(error);
         }
 }
+
+export async function checkId(id) {
+    const { data, error } = await supabase
+      .from('custom_games')
+      .select('nano_id') 
+      .eq('nano_id', id)
+      .single(); 
+  
+    if (error) {
+      console.error(error);
+      return false;
+    }
+  
+    return data ? true : false;
+  }

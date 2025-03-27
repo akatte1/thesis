@@ -1,7 +1,7 @@
 <script>
     import { scoreStore } from '$lib/stores/score';
-    import Header from '$lib/Header.svelte';
-    import Edetabel from '$lib/Edetabel.svelte';
+    import Header from '$lib/components/Header.svelte';
+    import Edetabel from '$lib/components/Edetabel.svelte';
     import { writeCustomScore, writeScore } from '$lib/supabase';
 
     export let data;
