@@ -16,6 +16,8 @@ export async function getAllRows(table) {
     return data
 }
 
+
+
 /***************/
 // Scores       /
 /***************/
