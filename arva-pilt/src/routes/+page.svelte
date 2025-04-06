@@ -52,11 +52,11 @@
 
 </script>
 
-<div class="container flex flex-col md:flex-row">
+<div class="container flex flex-col md:flex-row gap-6 md:gap-0 text-xl">
     <div class="w-full md:w-1/2 flex items-center justify-center">
-        <img class="md:w-64 md:h-64 w-48 h-48 animate-[spin_25s_linear_infinite_reverse]" src="./logo.png" alt="LOGO">
+        <img class="md:w-64 md:h-64 w-32 h-32 animate-[spin_25s_linear_infinite_reverse]" src="./logo.png" alt="LOGO">
     </div>
-    <div class="w-full md:w-1/2 text-xl text-white flex items-center justify-center text-center">
+    <div class="w-full md:w-1/2 text-white flex items-center justify-center text-center">
         <ul>
             <li on:click={manageGame}><h1>Mängi</h1></li>
             <li on:click={goToCreateGame}><h1>Loo mäng</h1></li>
@@ -96,7 +96,7 @@
     .container {
         width: 100vw;
         height: 100vh;
-        max-width: 1920px;
+        max-width: 1440px;
         display: flex;
         align-items: center;
         justify-content: center;

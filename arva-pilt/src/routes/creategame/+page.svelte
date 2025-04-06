@@ -3,7 +3,6 @@
     import Input from "$lib/components/Input.svelte";
 	import { writeCustomGame, writeCustomImage } from "$lib/supabase";
     import { nanoid } from "nanoid";
-    import L from "leaflet";
 	import { onMount } from "svelte";
    
     /*******************/

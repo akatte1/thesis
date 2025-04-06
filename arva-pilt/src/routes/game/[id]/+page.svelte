@@ -87,6 +87,11 @@
         }
     }
 
+    // Demo
+    function goToRules() {
+        goto("/rules")
+    }
+
     // Kauguse punktid
     function distanceToPoints(a) {
         if (a-1 > 0) return a > 100 ? 0 : Math.round(5000 - (a-1)*50) 
@@ -169,6 +174,8 @@ Loading...
             {:else}
                 {#if !guessed}
                 <button on:click={makeGuess} class="border border-2 hover:bg-white hover:text-[#1e272e] cursor-pointer">Arva</button>
+                {:else if id=='demo'}
+                <button on:click={goToRules} class="border border-2 hover:bg-white hover:text-[#1e272e] cursor-pointer">Tagasi</button>
                 {:else}
                 <button on:click={advance} class="border border-2 hover:bg-white hover:text-[#1e272e] cursor-pointer">Edasi</button>
                 {/if}

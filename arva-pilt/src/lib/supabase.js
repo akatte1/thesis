@@ -130,6 +130,17 @@ export async function getCustomImages(gameId) {
 
 }
 
+export async function getDailyImages(ids) {
+    const {data, error} = await supabase.from('images').select("*").in("id", ids)
+
+    if (error) {
+        console.log("error: ", error)
+        return []
+    }
+
+    return data
+}
+
 /***************/
 // Custom games /
 /***************/
