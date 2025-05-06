@@ -1,4 +1,5 @@
 <script>
+    // Esileht
     import { goto } from '$app/navigation'
     import Header from '$lib/components/Header.svelte'
     import { checkId } from '$lib/supabase'
@@ -9,6 +10,7 @@
     let wrongId = false
     let checkingGame = false
 
+    // Navigeerimine
     function goToDailyGame() {
         goto("/game/daily")
     }

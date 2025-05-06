@@ -1,4 +1,5 @@
 <script>
+    // Reeglid
     import Header from "$lib/components/Header.svelte";
     import { goto } from '$app/navigation'
 

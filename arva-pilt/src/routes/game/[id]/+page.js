@@ -1,6 +1,6 @@
 import { getCustomImages, getDailyImages, supabase } from '$lib/supabase'
 
-// ChatGPT
+// ChatGPT'ga loodud funktsioon suvaliste arvude leidmiseks
 function getRandomNumbers(count, min, max) {
     const numbers = [];
     for (let i = 0; i < count; i++) {
@@ -10,12 +10,13 @@ function getRandomNumbers(count, min, max) {
     return numbers;
   }
 
+// Laadib sisse pildid, millega mängitakse
 export async function load({ params }) {
     const { id } = params;
     console.log(id)
 
     let images = []
-    let ids = getRandomNumbers(5, 1, 102)
+    let ids = getRandomNumbers(5, 1, 200)
     console.log(ids)
 
     if (id == 'daily') {

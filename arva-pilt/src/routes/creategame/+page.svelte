@@ -1,4 +1,5 @@
 <script>
+    // Leht mängu loomiseks
     import Header from "$lib/components/Header.svelte";
     import Input from "$lib/components/Input.svelte";
 	import { writeCustomGame, writeCustomImage } from "$lib/supabase";
@@ -9,7 +10,7 @@
     //  Vooru lisamine //
     /*******************/ 
 
-    let gameId = nanoid(8);
+    let gameId = nanoid(8); // Unikaalse koodi loomine
 
     let showForm = false
     let rounds = []
@@ -20,6 +21,8 @@
 
     function addRound() { showForm = true } 
 
+    // Mängu loomine
+    // Kirjutab mängu andmebaasi antud koodiga
     async function createGame() {
         creatingGame = true
         await writeCustomGame(gameId)

@@ -1,13 +1,16 @@
 <script>
+    // Komponent andmete sisestamiseks
+    // Kasutatakse pildi lisamisel ja mängu loomisel
     import Map from "./Map.svelte";
     import { uploadImage, writeNewImage } from "$lib/supabase";
 
-    export let addImage = false
+    export let addImage = false // Selle parameetri abil vaadatakse, kummal lehel komponenti kasutatakse
 
-    let ala = [[57.476035, 21.503336], [59.752687, 28.233382]]
+    let ala = [[57.476035, 21.503336], [59.752687, 28.233382]] // Eraldab kaardilt Eesti
     let map
     let marker = null
 
+    // Lähteandmed
     export let showForm = false
     export let rounds = []
     export let gameId
@@ -23,8 +26,10 @@
     export let uploadingImage = false
     export let imageAdded = false
 
+    // Vooru lisamise tühistamine
     function cancelRound() { showForm = false }
 
+    // Vooru lisamine
     async function confirmRound() {
         if (image && location && description && attribution && year) {
             uploadingImage = true
@@ -55,6 +60,7 @@
         }
     }
 
+    // Pildi üleslaadimine andmebaasi
     async function sendImage() {
         if (image && location && description && attribution && year) {
             uploadingImage = true

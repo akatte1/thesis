@@ -3,6 +3,8 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = "https://fhvyejghylntcyvatwuq.supabase.co";
 const supabaseApiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZodnllamdoeWxudGN5dmF0d3VxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MTA3NDQ2NywiZXhwIjoyMDU2NjUwNDY3fQ.HVjcJY5O6ZsToeFUwQUoac6dwVTUEqxP5Otc-MpirrA";
 
+//Serveri kood andmebaasi päringuteks
+
 export const supabase = createClient(supabaseUrl, supabaseApiKey);
 
 export async function getAllRows(table) {
@@ -15,7 +17,6 @@ export async function getAllRows(table) {
 
     return data
 }
-
 
 
 /***************/
@@ -170,4 +171,4 @@ export async function checkId(id) {
     }
   
     return data ? true : false;
-  }
+}

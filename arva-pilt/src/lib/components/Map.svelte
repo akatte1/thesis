@@ -1,4 +1,6 @@
 <script>
+    // Kaardi komponent
+    // Kasutatakse mitmes kohas
     import { onMount, onDestroy } from "svelte";
     export let marker
     export let location
@@ -8,7 +10,7 @@
     export let input
 
     let map
-    let ala = [[57.476035, 21.503336], [59.752687, 28.233382]]
+    let ala = [[57.476035, 21.503336], [59.752687, 28.233382]] //Eesti
 
     onMount(async () => {
         const leaflet = await import("leaflet")
@@ -17,7 +19,8 @@
 
     onDestroy(() => {if (map) {map.remove()}})
 
-    const initialView = [58.692947, 24.798119]
+    const initialView = [58.692947, 24.798119] // Kaardi keskkoht
+    // Kaardi loomine vastavalt api dokumentatsioonile
     function createMap(container) {
         let m = L.map(container, {preferCanvas: true }).setView(initialView, 7);
         L.tileLayer(
@@ -45,6 +48,7 @@
         map.on('click', onMapClick);
     }
 
+    // Markeri asetamine kaardile
     function onMapClick(e) {
         if (inBounds(e.latlng["lat"], e.latlng["lng"]) && !guessed) {
             if (marker) {
@@ -62,11 +66,13 @@
         return false
     }
 
+    // Mängus kasutamiseks edasi liikumisel
     export function advance() {
         map.removeLayer(marker)
         map.removeLayer(correctMarker)
     }
 
+    // Mängus kasutamiseks tulemuste näitamisel
     export function makeGuess() {
         correctMarker = L.marker(correctLocation).addTo(map)
     }

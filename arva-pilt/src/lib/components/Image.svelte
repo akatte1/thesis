@@ -1,7 +1,6 @@
 <script>
-    /*
-    See komponent sai tehtud suuresti tehisaru abiga: chatgpt.com
-    */
+    // Komponendi loomisel kasutati ChatGPT abi
+    // Pildi komponent, mida saab suurendada ja liigutada
     export let source 
 
     let imgRef
@@ -12,6 +11,7 @@
     let translateX = 0, translateY = 0
     let isPanning = false
 
+    // Pildi suuruse leidmine
     function getImageSize() {
         if (imgRef) {
             imgWidth = imgRef.naturalWidth
@@ -19,6 +19,7 @@
         }
     }
 
+    // Suurendamise loogika
     function onWheel(event) {
         event.preventDefault()
         const zoomIntensity = 0.005
@@ -27,6 +28,7 @@
         clampTranslation()
     }
 
+    // Liigutamise loogika
     function onMouseDown(event) {
         event.preventDefault()
         isPanning = true
@@ -36,6 +38,7 @@
         lastY = translateY
     }
 
+    // Liigutamise loogika
     function onMouseMove(event) {
         if (isPanning) {
             const deltaX = (event.clientX - startX) / scale
@@ -52,6 +55,7 @@
         isPanning = false
     }
 
+    // Et liigutused jääksid jõusse
     function clampTranslation() {
         if (!imgRef) return
 

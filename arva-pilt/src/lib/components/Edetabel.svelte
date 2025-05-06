@@ -1,7 +1,8 @@
 <script>
-    import { onMount } from "svelte";
+    // Edetabeli komponent
 
-    export let scores
+    import { onMount } from "svelte";
+    export let scores // Tulemused saadakse parameetrina ja kajastatakse listina
 
     let isLoading = true  
 

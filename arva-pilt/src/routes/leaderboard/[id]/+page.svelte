@@ -9,11 +9,12 @@
     
     let score = 0
     let newScore = null
-    scoreStore.subscribe(value => score = value)
+    scoreStore.subscribe(value => score = value) // Mängitud mängu tulemus
 
     let scoreSubmitted = false
     let name = null
 
+    // Tulemuse lisamine edetabelisse
     async function submitScore() {
         if (id == 'daily') {
             await writeScore("scores", {name: name, score: score})

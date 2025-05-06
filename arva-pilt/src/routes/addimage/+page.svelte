@@ -1,9 +1,12 @@
 <script>
+    // Leht piltide lisamiseks
+    // Kasutab suures osas sisendi komponenti
     import Input from "$lib/components/Input.svelte";
     import Header from "$lib/components/Header.svelte";
 
-    let imageAdded
-    let uploadingImage
+
+    let imageAdded // Kas pilt on lisatud?
+    let uploadingImage 
 </script>
 
 <svelte:head>

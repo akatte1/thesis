@@ -1,5 +1,6 @@
 import { getAllRows, getCustomScores, supabase } from '$lib/supabase'
 
+// Laadib sisse tulemused edetabeli jaoks
 export async function load({ params }) {
     const { id } = params;
 
